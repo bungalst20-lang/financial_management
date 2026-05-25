@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fintack - Personal Finance Dashboard</title>
+    <!-- Include Bootstrap Grid only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <nav class="premium-navbar">
+      <a href="dashboard.html" class="nav-brand">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="12" y1="1" x2="12" y2="23"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+        Fintack
+      </a>
+      <div class="nav-links">
+        <a href="dashboard.html" class="nav-link active">Dashboard</a>
+        <a href="transaction.html" class="nav-link">Transactions</a>
+        <a href="category.html" class="nav-link">Categories</a>
+        <a href="change-password.html" class="nav-link">Settings</a>
+        <a
+          href="#"
+          onclick="
+            logout();
+            return false;
+          "
+          class="nav-link text-danger"
+          >Logout</a
+        >
+      </div>
+    </nav>
+
+    <main class="dashboard-content">
+      <!-- Welcome banner -->
+      <div class="mb-4">
+        <h1 style="font-size: 2.25rem">
+          Welcome back,
+          <span id="welcomeUser" class="text-success">User</span> 🤞
+        </h1>
+        <p class="text-secondary">Here's your financial status overview.</p>
+      </div>
+
+      <!-- KPIs Row -->
+      <div class="dashboard-grid">
+        <div class="glass-card kpi-card kpi-card-primary">
+          <div class="kpi-label">Total Balance</div>
+          <div class="kpi-value" id="totalBalance">Rp 0</div>
+          <div class="kpi-trend text-muted" style="font-size: 0.8rem">
+            Current net worth
+          </div>
+        </div>
+        <div class="glass-card kpi-card kpi-card-success">
+          <div class="kpi-label">Total Income</div>
+          <div class="kpi-value" id="totalIncome">Rp 0</div>
+          <div class="kpi-trend trend-up">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+              <polyline points="17 6 23 6 23 12"></polyline>
+            </svg>
+            Total earnings
+          </div>
+        </div>
+        <div class="glass-card kpi-card kpi-card-danger">
+          <div class="kpi-label">Total Expenses</div>
+          <div class="kpi-value" id="totalExpense">Rp 0</div>
+          <div class="kpi-trend trend-down">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+              <polyline points="17 18 23 18 23 12"></polyline>
+            </svg>
+            Total spent
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Section: Charts + Recent Activity -->
+      <div class="row g-4">
+        <!-- Trend Chart -->
+        <div class="col-lg-7">
+          <div class="glass-card h-100">
+            <h3 class="mb-3">Income vs Expense Trend</h3>
+            <div class="chart-container">
+              <canvas id="incomeExpenseTrendChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Category Breakdown -->
+        <div class="col-lg-5">
+          <div class="glass-card h-100">
+            <h3 class="mb-3">Expense Breakdown</h3>
+            <div
+              class="chart-container d-flex align-items-center justify-content-center"
+            >
+              <canvas id="expenseCategoryChart"></canvas>
+              <div
+                id="noChartDataMessage"
+                class="text-center text-muted"
+                style="display: none; font-size: 0.95rem"
+              >
+                No expense records to analyze.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="col-12 mt-4">
+          <div class="glass-card">
+            <div class="flex-between mb-4">
+              <h3>Recent Transactions</h3>
+              <a
+                href="transaction.html"
+                class="btn-premium btn-premium-secondary btn-sm"
+              >
+                View All
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+            <div class="table-responsive">
+              <table class="premium-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="recentTransactionsList">
+                  <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                      Loading your transaction records...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="../js/dashboard.js"></script>
+  </body>
+</html>

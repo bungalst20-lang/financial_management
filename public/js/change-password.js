@@ -1,35 +1,39 @@
-async function login() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
+async function changePassword() {
+  const oldPassword = document.getElementById("oldPassword").value;
+  const newPassword = document.getElementById("newPassword").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
 
-  if (!username || !password) {
+  if (!oldPassword || !newPassword || !confirmPassword) {
     showToast("Please fill all fields", "danger");
     return;
   }
 
+  if (newPassword !== confirmPassword) {
+    showToast("New passwords do not match", "danger");
+    return;
+  }
+
   try {
-    const response = await fetch("/auth/login", {
+    const response = await fetch("/auth/change-password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username,
-        password,
+        oldPassword,
+        newPassword,
       }),
     });
 
     const result = await response.json();
 
     if (response.ok) {
-      showToast("Login successful! Redirecting...", "success");
-      // Save username to local storage for customized UI dashboard greeting
-      localStorage.setItem("user", JSON.stringify(result.user));
+      showToast("Password changed successfully!", "success");
       setTimeout(() => {
         window.location.href = "/pages/dashboard.html";
-      }, 1000);
+      }, 1500);
     } else {
-      showToast(result.message || "Login failed", "danger");
+      showToast(result.message || "Change failed", "danger");
     }
   } catch (err) {
     console.error(err);

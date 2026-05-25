@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fintack - Transactions Ledger</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body>
+    <nav class="premium-navbar">
+      <a href="dashboard.html" class="nav-brand">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="12" y1="1" x2="12" y2="23"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+        Fintack
+      </a>
+      <div class="nav-links">
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="transaction.html" class="nav-link active">Transactions</a>
+        <a href="category.html" class="nav-link">Categories</a>
+        <a href="change-password.html" class="nav-link">Settings</a>
+        <a
+          href="#"
+          onclick="
+            logout();
+            return false;
+          "
+          class="nav-link text-danger"
+          >Logout</a
+        >
+      </div>
+    </nav>
+
+    <main class="dashboard-content">
+      <div class="flex-between mb-4">
+        <div>
+          <h1 style="font-size: 2.25rem">Transactions</h1>
+          <p class="text-secondary">Track and audit your cashflow ledger</p>
+        </div>
+        <button onclick="openAddModal()" class="btn-premium">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add Transaction
+        </button>
+      </div>
+
+      <!-- Search and Filter Bar -->
+      <div class="glass-card mb-4" style="padding: 1.25rem 1.5rem">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label for="searchDescription" class="form-label"
+              >Search Description</label
+            >
+            <input
+              type="text"
+              id="searchDescription"
+              class="form-input"
+              placeholder="Type query to filter..."
+              oninput="applyFilters()"
+            />
+          </div>
+          <div class="col-md-4">
+            <label for="filterType" class="form-label">Type</label>
+            <select
+              id="filterType"
+              class="form-input"
+              onchange="applyFilters()"
+            >
+              <option value="">All Types</option>
+              <option value="income">Income Only</option>
+              <option value="expense">Expense Only</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="filterCategory" class="form-label">Category</label>
+            <select
+              id="filterCategory"
+              class="form-input"
+              onchange="applyFilters()"
+            >
+              <option value="">All Categories</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions list card -->
+      <div class="glass-card">
+        <div class="table-responsive">
+          <table class="premium-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="transactionList">
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                  Loading transaction ledger...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal Overlay for Add/Edit Transaction -->
+    <div id="transactionModal" class="modal-overlay">
+      <div class="modal-premium">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Add Transaction</h5>
+          <button onclick="closeModal()" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form
+            onsubmit="
+              event.preventDefault();
+              saveTransaction();
+            "
+          >
+            <div class="form-group">
+              <label for="txType" class="form-label">Transaction Type</label>
+              <select id="txType" class="form-input" required>
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="txAmount" class="form-label">Amount (IDR)</label>
+              <input
+                type="number"
+                id="txAmount"
+                class="form-input"
+                placeholder="e.g. 50000"
+                min="1"
+                step="any"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="txCategory" class="form-label">Category</label>
+              <select id="txCategory" class="form-input">
+                <option value="">-- No Category --</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="txDate" class="form-label">Transaction Date</label>
+              <input type="date" id="txDate" class="form-input" required />
+            </div>
+
+            <div class="form-group">
+              <label for="txDescription" class="form-label">Description</label>
+              <input
+                type="text"
+                id="txDescription"
+                class="form-input"
+                placeholder="e.g. Bought groceries, salary bonus"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            onclick="closeModal()"
+            class="btn-premium btn-premium-secondary"
+          >
+            Cancel
+          </button>
+          <button onclick="saveTransaction()" class="btn-premium">
+            Save Transaction
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../js/transaction.js"></script>
+  </body>
+</html>

@@ -4,6 +4,7 @@ USE finance_app;
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
     username VARCHAR(100) UNIQUE,
     password VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -18,6 +19,7 @@ CREATE TABLE transactions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     type ENUM('income', 'expense'),
     amount DECIMAL(10,2),
+    user_id INT,
     category_id INT,
     description TEXT,
     transaction_date DATE,

@@ -1,19 +1,27 @@
-async function login() {
+async function register() {
+  const fullName = document.getElementById("fullName").value.trim();
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
 
-  if (!username || !password) {
+  if (!fullName || !username || !password) {
     showToast("Please fill all fields", "danger");
     return;
   }
 
+  if (password !== confirmPassword) {
+    showToast("Passwords do not match", "danger");
+    return;
+  }
+
   try {
-    const response = await fetch("/auth/login", {
+    const response = await fetch("/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        full_name: fullName,
         username,
         password,
       }),
@@ -22,14 +30,12 @@ async function login() {
     const result = await response.json();
 
     if (response.ok) {
-      showToast("Login successful! Redirecting...", "success");
-      // Save username to local storage for customized UI dashboard greeting
-      localStorage.setItem("user", JSON.stringify(result.user));
+      showToast("Registration successful! Redirecting...", "success");
       setTimeout(() => {
-        window.location.href = "/pages/dashboard.html";
-      }, 1000);
+        window.location.href = "/pages/login.html";
+      }, 1500);
     } else {
-      showToast(result.message || "Login failed", "danger");
+      showToast(result.message || "Registration failed", "danger");
     }
   } catch (err) {
     console.error(err);
@@ -53,8 +59,10 @@ function showToast(message, type = "primary") {
     `;
   container.appendChild(toast);
 
+  // Trigger animate-in
   setTimeout(() => toast.classList.add("show"), 10);
 
+  // Remove toast after 3 seconds
   setTimeout(() => {
     toast.classList.remove("show");
     setTimeout(() => toast.remove(), 300);

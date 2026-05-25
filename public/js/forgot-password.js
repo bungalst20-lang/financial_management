@@ -1,35 +1,42 @@
-async function login() {
+async function resetPassword() {
   const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
+  const newPassword = document.getElementById("newPassword").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
 
-  if (!username || !password) {
+  if (!username || !newPassword || !confirmPassword) {
     showToast("Please fill all fields", "danger");
     return;
   }
 
+  if (newPassword !== confirmPassword) {
+    showToast("Passwords do not match", "danger");
+    return;
+  }
+
   try {
-    const response = await fetch("/auth/login", {
+    const response = await fetch("/auth/forgot-password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         username,
-        password,
+        newPassword,
       }),
     });
 
     const result = await response.json();
 
     if (response.ok) {
-      showToast("Login successful! Redirecting...", "success");
-      // Save username to local storage for customized UI dashboard greeting
-      localStorage.setItem("user", JSON.stringify(result.user));
+      showToast(
+        "Password reset successful! Redirecting to login...",
+        "success",
+      );
       setTimeout(() => {
-        window.location.href = "/pages/dashboard.html";
-      }, 1000);
+        window.location.href = "/pages/login.html";
+      }, 1500);
     } else {
-      showToast(result.message || "Login failed", "danger");
+      showToast(result.message || "Reset failed", "danger");
     }
   } catch (err) {
     console.error(err);
